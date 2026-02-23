@@ -1,0 +1,510 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة النماء التعليمية - الطلاب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #0a3144, #06212e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .platform {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 70px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            padding: 30px;
+        }
+        .header {
+            background: linear-gradient(135deg, #005a8c, #003153);
+            padding: 30px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 4px solid #ffd966;
+        }
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ffd966;
+            text-shadow: 0 0 30px gold;
+        }
+        .code-screen {
+            background: #0f2c3b;
+            border-radius: 80px;
+            padding: 50px;
+            text-align: center;
+            border: 5px solid #ffaa33;
+        }
+        .code-screen h2 {
+            font-size: 2.5rem;
+            color: #ffdf7e;
+            margin-bottom: 30px;
+        }
+        .code-input {
+            background: #06212e;
+            border: 6px solid #ffd966;
+            padding: 20px;
+            border-radius: 120px;
+            width: 400px;
+            margin: 20px auto;
+        }
+        .code-input input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffdf7e;
+            font-size: 2.5rem;
+            text-align: center;
+            font-family: monospace;
+        }
+        .enter-btn {
+            background: linear-gradient(145deg, #ffaa33, #ff7700);
+            border: none;
+            padding: 15px 50px;
+            border-radius: 120px;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #0a1f2a;
+            box-shadow: 0 10px 0 #b85300;
+            cursor: pointer;
+            margin: 20px 0;
+            border: 4px solid #ffe29c;
+            transition: 0.1s ease;
+        }
+        .enter-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 5px 0 #b85300;
+        }
+        .info-screen {
+            display: none;
+            background: #0f2c3b;
+            border-radius: 80px;
+            padding: 50px;
+            border: 5px solid #4CAF50;
+        }
+        .info-screen h2 {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .info-input {
+            background: #06212e;
+            border: 4px solid #4CAF50;
+            padding: 12px 20px;
+            border-radius: 60px;
+            width: 100%;
+            margin: 15px 0;
+        }
+        .info-input input, .info-input select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #4CAF50;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .info-input select option {
+            background: #06212e;
+            color: #ffdf7e;
+        }
+        .exam-screen {
+            display: none;
+        }
+        .exam-header {
+            background: #0f2632;
+            border-radius: 50px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            border: 3px solid gold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .student-info {
+            background: #005a8c;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            color: #ffdf7e;
+            border: 2px solid gold;
+        }
+        .timer {
+            background: #1e2c3a;
+            padding: 10px 25px;
+            border-radius: 40px;
+            font-size: 1.8rem;
+            color: #f1c40f;
+            border: 2px solid #f3b33d;
+            font-family: monospace;
+        }
+        .timer.warning {
+            color: #ff6666;
+            border-color: #ff6666;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .questions-container {
+            background: #17212bb0;
+            border-radius: 40px;
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .question-box {
+            background: #1f3341;
+            margin-bottom: 15px;
+            border-radius: 30px;
+            padding: 20px;
+            border: 2px solid #b8860b;
+        }
+        .question-text {
+            font-size: 1.3rem;
+            color: #ffdf7e;
+            margin-bottom: 15px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .option-item {
+            background: #2a4050;
+            padding: 8px 15px;
+            border-radius: 30px;
+            color: #efdba8;
+            border: 2px solid #5f6f7e;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option-item:hover {
+            background: #2e5268;
+            border-color: #f3b33d;
+        }
+        .option-item input {
+            transform: scale(1.2);
+            margin-left: 10px;
+            accent-color: #f1c40f;
+        }
+        .tf-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .tf-item {
+            background: #2a4050;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 1.3rem;
+            border: 2px solid #a38037;
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tf-item:hover {
+            background: #2e5268;
+            border-color: #f3b33d;
+        }
+        .tf-item input {
+            transform: scale(1.2);
+            margin-left: 10px;
+            accent-color: #f1c40f;
+        }
+        .submit-exam-btn {
+            background: linear-gradient(145deg, #f3b33d, #ca961d);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0a1f2a;
+            box-shadow: 0 8px 0 #6b4d16;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            border: 4px solid #ffe29c;
+            transition: 0.1s ease;
+        }
+        .submit-exam-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #6b4d16;
+        }
+        .submit-exam-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: 0 8px 0 #6b4d16;
+        }
+        .result-box {
+            background: #061016;
+            border-radius: 50px;
+            padding: 30px;
+            border: 4px solid gold;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .result-box h2 {
+            color: gold;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        .result-box .score {
+            font-size: 4rem;
+            color: #4CAF50;
+            font-weight: 900;
+            margin: 15px 0;
+        }
+        .result-box .student-details {
+            color: #ffdf7e;
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+<div class="platform">
+    <div class="header">
+        <h1>📚 منصة النماء التعليمية - الطلاب</h1>
+    </div>
+
+    <!-- شاشة إدخال الكود -->
+    <div id="codeScreen" class="code-screen">
+        <h2><i class="fas fa-key"></i> أدخل كود الامتحان</h2>
+        <div class="code-input">
+            <input type="text" id="codeInput" placeholder="أدخل الكود">
+        </div>
+        <button class="enter-btn" onclick="verifyCode()">دخول</button>
+    </div>
+
+    <!-- شاشة إدخال البيانات الشخصية -->
+    <div id="infoScreen" class="info-screen">
+        <h2><i class="fas fa-user-graduate"></i> أدخل بياناتك</h2>
+        
+        <div class="info-input">
+            <input type="text" id="studentName" placeholder="الاسم الكامل">
+        </div>
+        
+        <div class="info-input">
+            <select id="studentGrade">
+                <option value="">اختر الصف</option>
+                <option value="الأول">الأول</option>
+                <option value="الثاني">الثاني</option>
+                <option value="الثالث">الثالث</option>
+                <option value="الرابع">الرابع</option>
+                <option value="الخامس">الخامس</option>
+                <option value="السادس">السادس</option>
+                <option value="السابع">السابع</option>
+                <option value="الثامن">الثامن</option>
+                <option value="التاسع">التاسع</option>
+                <option value="العاشر">العاشر</option>
+                <option value="الحادي عشر">الحادي عشر</option>
+                <option value="الثاني عشر">الثاني عشر</option>
+                <option value="الأول ثانوي">الأول ثانوي</option>
+                <option value="الثاني ثانوي">الثاني ثانوي</option>
+            </select>
+        </div>
+        
+        <div class="info-input">
+            <select id="studentClass">
+                <option value="">اختر الشعبة</option>
+                <option value="أ">شعبة أ</option>
+                <option value="ب">شعبة ب</option>
+                <option value="ج">شعبة ج</option>
+                <option value="د">شعبة د</option>
+            </select>
+        </div>
+        
+        <button class="enter-btn" onclick="startExam()">بدء الامتحان</button>
+    </div>
+
+    <!-- شاشة الامتحان -->
+    <div id="examScreen" class="exam-screen">
+        <div class="exam-header">
+            <div class="student-info" id="studentInfo"></div>
+            <div class="timer" id="timer">00:00</div>
+        </div>
+        
+        <div id="questionsArea" class="questions-container"></div>
+        
+        <button class="submit-exam-btn" id="submitBtn" onclick="submitExam()">
+            <i class="fas fa-check-circle"></i> إنهاء الامتحان
+        </button>
+        
+        <div id="result" class="result-box">
+            <h2><i class="fas fa-star"></i> نتيجتك</h2>
+            <div class="score" id="scoreDisplay">0</div>
+            <div class="student-details" id="resultInfo"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let exams = JSON.parse(localStorage.getItem('exams')) || [];
+    let currentExam = null;
+    let currentStudent = null;
+    let timeLeft = 0;
+    let timerInterval;
+    let examSubmitted = false;
+
+    function getExamByCode(code) {
+        return exams.find(e => e.code === code);
+    }
+
+    window.verifyCode = function() {
+        const code = document.getElementById('codeInput').value.trim();
+        currentExam = getExamByCode(code);
+        
+        if (currentExam) {
+            document.getElementById('codeScreen').style.display = 'none';
+            document.getElementById('infoScreen').style.display = 'block';
+        } else {
+            alert('❌ كود غير صالح');
+        }
+    };
+
+    window.startExam = function() {
+        const name = document.getElementById('studentName').value.trim();
+        const grade = document.getElementById('studentGrade').value;
+        const studentClass = document.getElementById('studentClass').value;
+        
+        if (!name || !grade || !studentClass) {
+            alert('❌ الرجاء إدخال جميع البيانات');
+            return;
+        }
+
+        currentStudent = { name, grade, class: studentClass };
+        
+        document.getElementById('infoScreen').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'block';
+        document.getElementById('studentInfo').innerHTML = `<i class="fas fa-user"></i> ${name} | ${grade} | شعبة ${studentClass}`;
+        
+        renderQuestions();
+        startTimer(currentExam.duration * 60);
+    };
+
+    function renderQuestions() {
+        let html = '';
+        currentExam.questions.forEach((q, index) => {
+            html += `<div class="question-box">`;
+            html += `<div class="question-text">${index+1}. ${q.text}</div>`;
+            
+            if (q.type === 'quiz') {
+                html += `<div class="options">`;
+                q.options.forEach((opt, i) => {
+                    html += `<label class="option-item"><input type="radio" name="q${index}" value="${opt}"> ${opt}</label>`;
+                });
+                html += `</div>`;
+            } else {
+                html += `<div class="tf-group">`;
+                html += `<label class="tf-item"><input type="radio" name="q${index}" value="true"> ✔ صح</label>`;
+                html += `<label class="tf-item"><input type="radio" name="q${index}" value="false"> ✘ خطأ</label>`;
+                html += `</div>`;
+            }
+            html += `</div>`;
+        });
+        document.getElementById('questionsArea').innerHTML = html;
+    }
+
+    function startTimer(seconds) {
+        timeLeft = seconds;
+        const timerEl = document.getElementById('timer');
+        
+        timerInterval = setInterval(() => {
+            if (timeLeft <= 0 && !examSubmitted) {
+                clearInterval(timerInterval);
+                timerEl.textContent = '00:00';
+                timerEl.classList.add('warning');
+                alert('⚠️ انتهى الوقت! سيتم تسليم الامتحان تلقائياً.');
+                submitExam(true);
+            } else if (!examSubmitted) {
+                timeLeft--;
+                const hours = Math.floor(timeLeft / 3600);
+                const minutes = Math.floor((timeLeft % 3600) / 60);
+                const seconds = timeLeft % 60;
+                
+                if (hours > 0) {
+                    timerEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+                
+                if (timeLeft <= 300) {
+                    timerEl.classList.add('warning');
+                }
+            }
+        }, 1000);
+    }
+
+    window.submitExam = function(auto = false) {
+        if (examSubmitted) return;
+        
+        examSubmitted = true;
+        clearInterval(timerInterval);
+        
+        let score = 0;
+        currentExam.questions.forEach((q, index) => {
+            const radios = document.getElementsByName(`q${index}`);
+            for (let r of radios) {
+                if (r.checked) {
+                    if (q.correct === r.value) score++;
+                    break;
+                }
+            }
+        });
+
+        if (!currentExam.results) currentExam.results = [];
+        currentExam.results.push({
+            name: currentStudent.name,
+            grade: currentStudent.grade,
+            class: currentStudent.class,
+            score: score,
+            total: currentExam.questions.length,
+            date: new Date().toLocaleString('ar-EG')
+        });
+
+        const examIndex = exams.findIndex(e => e.code === currentExam.code);
+        if (examIndex !== -1) {
+            exams[examIndex] = currentExam;
+            localStorage.setItem('exams', JSON.stringify(exams));
+        }
+
+        document.getElementById('scoreDisplay').innerText = `${score}/${currentExam.questions.length}`;
+        document.getElementById('resultInfo').innerHTML = `${currentStudent.name} | ${currentStudent.grade} | شعبة ${currentStudent.class}`;
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('submitBtn').disabled = true;
+        
+        if (!auto) {
+            alert(`✅ تم تسليم الامتحان! نتيجتك: ${score}/${currentExam.questions.length}`);
+        }
+    };
+</script>
+</body>
+</html>

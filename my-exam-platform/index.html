@@ -1,0 +1,619 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة النماء التعليمية - المعلم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #0a3144, #06212e);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #005a8c, #003153);
+            padding: 40px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 4px solid #ffd966;
+            box-shadow: 0 0 50px #ffd96680;
+        }
+        .header h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff2b5, #ffd966, #ffe68f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px gold;
+            margin-bottom: 10px;
+        }
+        .header h2 {
+            font-size: 2.5rem;
+            color: #f8f0d5;
+            margin-bottom: 15px;
+        }
+        .header .teachers {
+            font-size: 2rem;
+            color: #ffdb8e;
+            background: #00000060;
+            display: inline-block;
+            padding: 15px 50px;
+            border-radius: 60px;
+            border: 2px solid gold;
+            line-height: 2;
+        }
+        .create-exam-btn {
+            background: linear-gradient(145deg, #4CAF50, #2E7D32);
+            border: none;
+            padding: 20px 50px;
+            border-radius: 60px;
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 10px 0 #1B5E20;
+            cursor: pointer;
+            margin: 30px 0;
+            border: 4px solid #a5d6a7;
+        }
+        .exams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .exam-card {
+            background: #1a3340;
+            border-radius: 40px;
+            padding: 30px;
+            border: 3px solid #b8860b;
+        }
+        .exam-card h3 {
+            color: #ffd966;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        .exam-card .info {
+            color: #ffde94;
+            font-size: 1.3rem;
+            margin: 10px 0;
+        }
+        .exam-card .code {
+            background: #0f2632;
+            padding: 10px;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 1.8rem;
+            color: #4CAF50;
+            text-align: center;
+            margin: 15px 0;
+            border: 2px dashed gold;
+        }
+        .exam-card .link {
+            background: #005a8c;
+            color: white;
+            padding: 10px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .exam-card .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .exam-card .stat-item {
+            text-align: center;
+        }
+        .exam-card .stat-number {
+            font-size: 2rem;
+            color: #4CAF50;
+            font-weight: 900;
+        }
+        .exam-card button {
+            background: #005a8c;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 30px;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-content {
+            background: #1a3340;
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 60px;
+            padding: 40px;
+            border: 5px solid gold;
+        }
+        .modal-content h2 {
+            color: gold;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            color: #ffd966;
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: #0f2632;
+            border: 3px solid #b8860b;
+            border-radius: 40px;
+            color: #ffdf7e;
+            font-size: 1.3rem;
+        }
+        .question-item {
+            background: #0f2632;
+            border-radius: 40px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #4CAF50;
+        }
+        .add-question-btn {
+            background: #2c3e50;
+            color: #ffd966;
+            border: 2px solid #b8860b;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .save-exam-btn {
+            background: linear-gradient(145deg, #4CAF50, #2E7D32);
+            border: none;
+            padding: 20px 50px;
+            border-radius: 60px;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+        }
+        .close-btn {
+            background: #ff6666;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 40px;
+            font-size: 1.3rem;
+            color: white;
+            cursor: pointer;
+            float: left;
+        }
+        .results-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 30px;
+        }
+        .results-content {
+            background: #1a3340;
+            max-width: 1000px;
+            margin: 30px auto;
+            border-radius: 60px;
+            padding: 40px;
+            border: 5px solid gold;
+        }
+        .results-table {
+            background: #0a1922;
+            border-radius: 40px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #ffde94;
+        }
+        th {
+            color: gold;
+            font-size: 1.3rem;
+            padding: 12px;
+            border-bottom: 2px solid gold;
+        }
+        td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #5f6f7e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏫 منصة النماء التعليمية</h1>
+            <h2>لوحة تحكم المعلم - إنشاء الامتحانات</h2>
+            <div class="teachers">
+                <i class="fas fa-chalkboard-teacher"></i> بإشراف قسم المهارات الرقمية<br>
+                ولاء البعيرات . غدير ابو عتيق . مازن اللوباني
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="create-exam-btn" onclick="showCreateExamModal()">
+                <i class="fas fa-plus-circle"></i> إنشاء امتحان جديد
+            </button>
+        </div>
+
+        <div id="examsList" class="exams-grid">
+            <!-- الامتحانات تظهر هنا -->
+        </div>
+    </div>
+
+    <!-- نافذة إنشاء امتحان جديد -->
+    <div id="createExamModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideCreateExamModal()">✖ إلغاء</button>
+            <h2><i class="fas fa-pen"></i> إنشاء امتحان جديد</h2>
+            
+            <div class="form-group">
+                <label>عنوان الامتحان</label>
+                <input type="text" id="examTitle" placeholder="مثال: امتحان الشهر الأول">
+            </div>
+
+            <div class="form-group">
+                <label>المادة</label>
+                <select id="examSubject">
+                    <option value="مهارات رقمية">مهارات رقمية</option>
+                    <option value="الرياضيات">الرياضيات</option>
+                    <option value="تاريخ">تاريخ</option>
+                    <option value="علوم أرض">علوم أرض</option>
+                    <option value="جغرافيا">جغرافيا</option>
+                    <option value="تربية وطنية">تربية وطنية</option>
+                    <option value="ثقافة مالية">ثقافة مالية</option>
+                    <option value="أحياء">أحياء</option>
+                    <option value="كيمياء">كيمياء</option>
+                    <option value="تربية إسلامية">تربية إسلامية</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>كود الامتحان (أدخل الكود الذي تريده)</label>
+                <input type="text" id="examCode" placeholder="مثال: EXAM2024" maxlength="10">
+                <small style="color:#ffaa33;">اكتب الكود الذي ستعطيه للطلاب</small>
+            </div>
+
+            <div class="form-group">
+                <label>مدة الامتحان (بالدقائق - حد أقصى 120 دقيقة)</label>
+                <input type="number" id="examDuration" value="30" min="1" max="120">
+            </div>
+
+            <div id="questionsContainer">
+                <!-- الأسئلة تضاف هنا -->
+            </div>
+
+            <button class="add-question-btn" onclick="addQuestion()">
+                <i class="fas fa-plus"></i> إضافة سؤال جديد
+            </button>
+
+            <button class="save-exam-btn" onclick="saveExam()">
+                <i class="fas fa-save"></i> حفظ الامتحان
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة عرض النتائج -->
+    <div id="resultsModal" class="results-modal">
+        <div class="results-content">
+            <button class="close-btn" onclick="hideResultsModal()">✖ إغلاق</button>
+            <h2 style="color:gold; text-align:center; font-size:2.5rem; margin-bottom:20px;" id="resultsTitle"></h2>
+            
+            <div style="text-align:left; margin-bottom:20px;">
+                <button class="add-question-btn" onclick="exportExamResults()">
+                    <i class="fas fa-file-excel"></i> تصدير Excel
+                </button>
+            </div>
+
+            <div class="results-table" id="resultsTable">
+                <!-- جدول النتائج يظهر هنا -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let exams = JSON.parse(localStorage.getItem('exams')) || [];
+        let questionCount = 0;
+        let currentExamId = null;
+
+        function showCreateExamModal() {
+            document.getElementById('createExamModal').style.display = 'block';
+            addQuestion();
+        }
+
+        function hideCreateExamModal() {
+            document.getElementById('createExamModal').style.display = 'none';
+            document.getElementById('questionsContainer').innerHTML = '';
+            questionCount = 0;
+        }
+
+        function addQuestion() {
+            questionCount++;
+            const container = document.getElementById('questionsContainer');
+            const questionHtml = `
+                <div class="question-item" id="question-${questionCount}">
+                    <div class="form-group">
+                        <label>نوع السؤال</label>
+                        <select onchange="toggleQuestionType(${questionCount}, this.value)">
+                            <option value="quiz">اختيار من متعدد</option>
+                            <option value="truefalse">صح/خطأ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>نص السؤال</label>
+                        <textarea id="q-text-${questionCount}" rows="2"></textarea>
+                    </div>
+                    <div id="q-options-${questionCount}">
+                        <!-- خيارات الأسئلة -->
+                    </div>
+                    <button class="add-question-btn" onclick="removeQuestion(${questionCount})" style="background:#ff6666; color:white;">
+                        <i class="fas fa-trash"></i> حذف السؤال
+                    </button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', questionHtml);
+            toggleQuestionType(questionCount, 'quiz');
+        }
+
+        function toggleQuestionType(qId, type) {
+            const optionsDiv = document.getElementById(`q-options-${qId}`);
+            if (type === 'quiz') {
+                optionsDiv.innerHTML = `
+                    <div class="form-group">
+                        <label>الخيار الأول</label>
+                        <input type="text" id="q-opt1-${qId}" placeholder="الخيار الأول">
+                    </div>
+                    <div class="form-group">
+                        <label>الخيار الثاني</label>
+                        <input type="text" id="q-opt2-${qId}" placeholder="الخيار الثاني">
+                    </div>
+                    <div class="form-group">
+                        <label>الخيار الثالث</label>
+                        <input type="text" id="q-opt3-${qId}" placeholder="الخيار الثالث">
+                    </div>
+                    <div class="form-group">
+                        <label>الخيار الرابع</label>
+                        <input type="text" id="q-opt4-${qId}" placeholder="الخيار الرابع">
+                    </div>
+                    <div class="form-group">
+                        <label>الإجابة الصحيحة</label>
+                        <select id="q-correct-${qId}">
+                            <option value="1">الخيار الأول</option>
+                            <option value="2">الخيار الثاني</option>
+                            <option value="3">الخيار الثالث</option>
+                            <option value="4">الخيار الرابع</option>
+                        </select>
+                    </div>
+                `;
+            } else {
+                optionsDiv.innerHTML = `
+                    <div class="form-group">
+                        <label>الإجابة الصحيحة</label>
+                        <select id="q-correct-${qId}">
+                            <option value="true">صح</option>
+                            <option value="false">خطأ</option>
+                        </select>
+                    </div>
+                `;
+            }
+        }
+
+        function removeQuestion(qId) {
+            document.getElementById(`question-${qId}`).remove();
+        }
+
+        function saveExam() {
+            const title = document.getElementById('examTitle').value;
+            const subject = document.getElementById('examSubject').value;
+            const examCode = document.getElementById('examCode').value.trim();
+            const duration = document.getElementById('examDuration').value;
+
+            if (!title) {
+                alert('❌ الرجاء إدخال عنوان الامتحان');
+                return;
+            }
+
+            if (!examCode) {
+                alert('❌ الرجاء إدخال كود الامتحان');
+                return;
+            }
+
+            if (exams.some(e => e.code === examCode)) {
+                alert('❌ هذا الكود مستخدم مسبقاً، الرجاء اختيار كود آخر');
+                return;
+            }
+
+            const questions = [];
+            for (let i = 1; i <= questionCount; i++) {
+                const questionDiv = document.getElementById(`question-${i}`);
+                if (questionDiv) {
+                    const text = document.getElementById(`q-text-${i}`)?.value;
+                    if (!text) continue;
+
+                    const typeSelect = questionDiv.querySelector('select');
+                    const type = typeSelect ? typeSelect.value : 'quiz';
+
+                    let question = {
+                        id: i,
+                        type: type,
+                        text: text
+                    };
+
+                    if (type === 'quiz') {
+                        question.options = [
+                            document.getElementById(`q-opt1-${i}`)?.value || '',
+                            document.getElementById(`q-opt2-${i}`)?.value || '',
+                            document.getElementById(`q-opt3-${i}`)?.value || '',
+                            document.getElementById(`q-opt4-${i}`)?.value || ''
+                        ];
+                        const correctOpt = document.getElementById(`q-correct-${i}`)?.value;
+                        question.correct = question.options[parseInt(correctOpt) - 1];
+                    } else {
+                        question.correct = document.getElementById(`q-correct-${i}`)?.value || 'true';
+                    }
+
+                    questions.push(question);
+                }
+            }
+
+            if (questions.length === 0) {
+                alert('❌ الرجاء إضافة سؤال واحد على الأقل');
+                return;
+            }
+
+            const exam = {
+                id: Date.now(),
+                title: title,
+                subject: subject,
+                duration: parseInt(duration),
+                code: examCode,
+                questions: questions,
+                date: new Date().toLocaleString('ar-EG'),
+                results: []
+            };
+
+            exams.push(exam);
+            localStorage.setItem('exams', JSON.stringify(exams));
+
+            alert(`✅ تم إنشاء الامتحان بنجاح!\nكود الامتحان: ${examCode}`);
+            hideCreateExamModal();
+            renderExams();
+        }
+
+        function renderExams() {
+            const container = document.getElementById('examsList');
+            let html = '';
+
+            exams.forEach(exam => {
+                const studentCount = exam.results ? exam.results.length : 0;
+                const avgScore = exam.results && exam.results.length > 0 
+                    ? Math.round(exam.results.reduce((sum, r) => sum + (r.score/r.total*100), 0) / exam.results.length) 
+                    : 0;
+
+                html += `
+                    <div class="exam-card">
+                        <h3>${exam.title}</h3>
+                        <div class="info"><i class="fas fa-book"></i> ${exam.subject}</div>
+                        <div class="info"><i class="fas fa-clock"></i> ${exam.duration} دقيقة</div>
+                        <div class="code">${exam.code}</div>
+                        <div class="link" onclick="copyExamLink('${exam.code}')">
+                            <i class="fas fa-link"></i> نسخ رابط الامتحان
+                        </div>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <div class="stat-number">${studentCount}</div>
+                                <div>طلاب</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${avgScore}%</div>
+                                <div>متوسط</div>
+                            </div>
+                        </div>
+                        <button onclick="viewExamResults(${exam.id})">
+                            <i class="fas fa-chart-bar"></i> عرض النتائج
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<p style="color:#ffaa33; text-align:center; font-size:2rem;">لا توجد امتحانات بعد</p>';
+        }
+
+        window.copyExamLink = function(code) {
+            const link = `${window.location.origin}/exam.html?code=${code}`;
+            navigator.clipboard.writeText(link);
+            alert('✅ تم نسخ الرابط!');
+        };
+
+        window.viewExamResults = function(examId) {
+            const exam = exams.find(e => e.id === examId);
+            if (!exam) return;
+
+            currentExamId = examId;
+            document.getElementById('resultsTitle').innerHTML = `<i class="fas fa-chart-bar"></i> نتائج: ${exam.title}`;
+
+            let tableHtml = '<table><tr><th>الاسم</th><th>الصف</th><th>الشعبة</th><th>النتيجة</th><th>التاريخ</th></tr>';
+            
+            if (exam.results && exam.results.length > 0) {
+                exam.results.forEach(r => {
+                    tableHtml += `<tr><td>${r.name}</td><td>${r.grade}</td><td>${r.class}</td><td>${r.score}/${r.total}</td><td>${r.date}</td></tr>`;
+                });
+            } else {
+                tableHtml += '<tr><td colspan="5" style="text-align:center;">لا توجد نتائج بعد</td></tr>';
+            }
+            
+            tableHtml += '</table>';
+            document.getElementById('resultsTable').innerHTML = tableHtml;
+            document.getElementById('resultsModal').style.display = 'block';
+        };
+
+        window.hideResultsModal = function() {
+            document.getElementById('resultsModal').style.display = 'none';
+        };
+
+        window.exportExamResults = function() {
+            const exam = exams.find(e => e.id === currentExamId);
+            if (!exam || !exam.results || exam.results.length === 0) {
+                alert('لا توجد نتائج للتصدير');
+                return;
+            }
+
+            const data = [['الاسم', 'الصف', 'الشعبة', 'النتيجة', 'التاريخ']];
+            exam.results.forEach(r => {
+                data.push([r.name, r.grade, r.class, `${r.score}/${r.total}`, r.date]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, 'النتائج');
+            XLSX.writeFile(wb, `${exam.title}.xlsx`);
+        };
+
+        renderExams();
+    </script>
+</body>
+</html>
